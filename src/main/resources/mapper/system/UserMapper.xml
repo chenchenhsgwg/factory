@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bosssoft.trainee.factory2.system.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.bosssoft.trainee.factory2.system.entity.User">
+        <id column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="realname" jdbcType="VARCHAR" property="realname"/>
+        <result column="telephone" jdbcType="VARCHAR" property="telephone"/>
+        <result column="factoryId" jdbcType="DECIMAL" property="factoryId"/>
+        <result column="factoryName" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="roleId" jdbcType="DECIMAL" property="roleId"/>
+        <result column="roleName" jdbcType="VARCHAR" property="roleName"/>
+    </resultMap>
+
+    <select id="getUserDetails" resultMap="BaseResultMap" parameterType="com.bosssoft.trainee.factory2.system.entity.User">
+        SELECT
+        u.id,
+        u.username,
+        u.password,
+        u.realname,
+        u.telephone,
+        f.id factoryId,
+        f.name factoryName,
+        r.id roleId,
+        r.name roleName
+        FROM
+        t_user u
+        LEFT JOIN factory f ON (u.id = f.userId)
+        LEFT JOIN user_role ur ON (u.id = ur.userId)
+        LEFT JOIN role r ON r.id = ur.roleId
+        WHERE 1 = 1
+        <if test="user.username != null and user.username != ''">
+            AND u.username = #{user.username}
+        </if>
+        <if test="user.factoryId != null and user.factoryId != ''">
+            AND f.id = #{user.factoryId}
+        </if>
+        group by u.id,
+        u.username,
+        u.password,
+        u.realname,
+        u.telephone,
+        f.id,
+        f.name,
+        r.id,
+        r.name
+    </select>
+
+    <select id="getUserDetail" resultMap="BaseResultMap" parameterType="string">
+        SELECT u.id,
+               u.username,
+               u.password,
+               u.realname,
+               u.telephone,
+               f.id   factoryId,
+               f.name factoryName,
+               r.id   roleId,
+               r.name roleName
+        FROM t_user u
+                 LEFT JOIN factory f ON (u.id = f.userId)
+                 LEFT JOIN user_role ur ON (u.id = ur.userId)
+                 LEFT JOIN role r ON r.id = ur.roleId
+        WHERE u.username = #{username}
+        group by u.id,
+                 u.username,
+                 u.password,
+                 u.realname,
+                 u.telephone,
+                 f.id,
+                 f.name,
+                 r.id,
+                 r.name
+    </select>
+
+    <select id="getUserDetailById" resultMap="BaseResultMap" parameterType="string">
+        SELECT
+            u.id,
+            u.username,
+            u.realname,
+            u.telephone
+        FROM t_user u
+        WHERE u.id = #{userId}
+        group by u.id,
+                 u.username,
+                 u.password,
+                 u.realname,
+                 u.telephone
+    </select>
+</mapper>

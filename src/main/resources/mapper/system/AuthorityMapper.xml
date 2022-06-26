@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bosssoft.trainee.factory2.system.mapper.AuthorityMapper">
+
+    <resultMap id="authority" type="com.bosssoft.trainee.factory2.system.entity.Authority">
+        <id column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="resource" jdbcType="VARCHAR" property="resource"/>
+        <result column="path" jdbcType="VARCHAR" property="path"/>
+        <result column="component" jdbcType="VARCHAR" property="component"/>
+        <result column="icon" jdbcType="VARCHAR" property="icon"/>
+        <result column="parentId" jdbcType="VARCHAR" property="parentId"/>
+        <result column="parentName" jdbcType="VARCHAR" property="parentName"/>
+    </resultMap>
+
+    <select id="findUserAuthorities" resultMap="authority">
+        select distinct a.id,
+                        a.name,
+                        a.resource,
+                        a.path,
+                        a.component,
+                        a.icon,
+                        a.parentId,
+                        a2.name
+        from role r
+                 left join user_role ur on (r.id = ur.roleId)
+                 left join t_user u on (u.id = ur.userId)
+                 left join role_auth rm on (rm.roleId = r.id)
+                 left join authority a on (a.id = rm.authId)
+                 left join authority a2 on a2.id = a.parentId
+        where u.username = #{userName}
+          and a.resource is not null
+          and a.resource &lt;&gt; ''
+    </select>
+</mapper>

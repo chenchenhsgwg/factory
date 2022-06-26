@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bosssoft.trainee.factory2.system.mapper.EquipmentMapper">
+    <!--查看信息，租用，返还-->
+    <resultMap id="BaseResultMap" type="com.bosssoft.trainee.factory2.system.entity.Equipment">
+        <id column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="enabled" jdbcType="TINYINT" property="enabled"/>
+        <result column="typeId" jdbcType="DECIMAL" property="typeId"/>
+        <result column="typeName" jdbcType="VARCHAR" property="typeName"/>
+        <result column="factoryId" jdbcType="DECIMAL" property="factoryId"/>
+        <result column="factoryName" jdbcType="VARCHAR" property="factoryName"/>
+        <result column="rentFactoryId" jdbcType="DECIMAL" property="rentFactoryId"/>
+        <result column="rentFactoryName" jdbcType="VARCHAR" property="rentFactoryName"/>
+    </resultMap>
+    <select id="getEquipmentDetails" resultMap="BaseResultMap"
+            parameterType="com.bosssoft.trainee.factory2.system.entity.Equipment">
+        select e.id,
+        e.name,
+        e.state,
+        e.enabled,
+        et.id typeId,
+        et.name typeName,
+        f.id factoryId,
+        f.name factoryName,
+        fr.id rentFactoryId,
+        fr.name rentFactoryName
+        from equipment e
+        left join e_type et on et.id = e.typeId
+        left join e_rent er on (e.id = er.equipmentId and er.enabled = 1)
+        left join factory f on f.id = e.factoryId
+        left join factory fr on (fr.id = er.factoryId and er.enabled = 1)
+        where 1 = 1
+        <if test="equipment.name != null and equipment.name != ''">
+            AND e.name like '%${equipment.name}%'
+        </if>
+        <if test="equipment.state != null and equipment.state != ''">
+            AND e.state = #{equipment.state}
+        </if>
+        <if test="equipment.typeName != null and equipment.typeName != ''">
+            AND et.name like '%${equipment.typeName}%'
+        </if>
+        group by f.name,
+        fr.name,
+        f.id,
+        e.id,
+        e.name,
+        e.state,
+        e.enabled,
+        et.id,
+        et.name,
+        fr.id
+    </select>
+    <select id="getActiveEquipmentDetails" resultMap="BaseResultMap"
+            parameterType="string">
+        select e.id,
+               e.name,
+               e.state,
+               e.enabled,
+               et.id   typeId,
+               et.name typeName,
+               f.id    factoryId,
+               f.name  factoryName,
+        from equipment e
+                 left join e_type et on et.id = e.typeId
+                 left join factory f on f.id = e.factoryId
+        where f.id = #{factoryId}
+        group by f.name
+    </select>
+</mapper>

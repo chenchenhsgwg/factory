@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bosssoft.trainee.factory2.system.mapper.FactoryMapper">
+    <resultMap id="BaseResultMap" type="com.bosssoft.trainee.factory2.system.entity.Factory">
+        <id column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="userId" jdbcType="DECIMAL" property="userId"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="enabled" jdbcType="TINYINT" property="enabled"/>
+    </resultMap>
+
+    <select id="getFactoryDetails" resultMap="BaseResultMap"
+            parameterType="com.bosssoft.trainee.factory2.system.entity.Factory">
+        select f.id,
+        f.name,
+        f.description,
+        f.userId,
+        u.username,
+        f.enabled
+        from factory f
+        left join t_user u on u.id = f.userId
+        where 1 = 1
+        <if test="factory.name != null and factory.name != ''">
+            AND f.name like #{factory.name}
+        </if>
+        <if test="factory.username != null and factory.username != ''">
+            AND u.username like #{factory.username}
+        </if>
+        group by f.id,
+        f.name,
+        f.description,
+        f.userId,
+        u.username,
+        f.enabled
+    </select>
+
+    <select id="getFactoryDetail" resultMap="BaseResultMap" parameterType="string">
+        select f.id,
+               f.name,
+               f.description,
+               f.userId,
+               u.username,
+               f.enabled
+        from factory f
+                 left join t_user u on u.id = f.userId
+        where f.name = #{factoryName}
+        group by f.id,
+                 f.name,
+                 f.description,
+                 f.userId,
+                 u.username,
+                 f.enabled
+    </select>
+
+    <delete id="deleteByUserId">
+        DELETE
+        FROM factory
+        WHERE userId = #{userId}
+    </delete>
+</mapper>

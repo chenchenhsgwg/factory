@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bosssoft.trainee.factory2.system.mapper.ETypeMapper">
+    <resultMap id="BaseResultMap" type="com.bosssoft.trainee.factory2.system.entity.EType">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="parentId" property="parentId"/>
+        <result column="parentName" property="parentName"/>
+    </resultMap>
+    <select id="getETypeDetails" resultMap="BaseResultMap"
+            parameterType="com.bosssoft.trainee.factory2.system.entity.EType">
+        select child.id,
+        child.name,
+        child.parentId,
+        parent.name parentName
+        from e_type child
+        left join e_type parent on parent.id = child.parentId
+        where 1 = 1
+        <if test="eType.name != null and eType.name != ''">
+            AND child.name = #{eType.name}
+        </if>
+        group by child.id,
+        child.name,
+        child.parentId,
+        parent.name
+    </select>
+
+    <select id="getETypeDetail" resultMap="BaseResultMap" parameterType="string">
+        select child.id,
+               child.name,
+               child.parentId,
+               parent.name parentName
+        from e_type child
+                 left join e_type parent on parent.id = child.parentId
+        where child.name = #{name}
+        group by child.id,
+                 child.name,
+                 child.parentId,
+                 parent.name
+    </select>
+</mapper>

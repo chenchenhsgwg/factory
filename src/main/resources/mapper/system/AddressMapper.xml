@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bosssoft.trainee.factory2.system.mapper.AddressMapper">
+    <!--getAddressDetails-->
+    <resultMap id="BaseResultMap" type="com.bosssoft.trainee.factory2.system.entity.Address">
+        <id column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="userId" jdbcType="DECIMAL" property="userId"/>
+        <result column="name" jdbcType="VARCHAR" property="receiver"/>
+        <result column="parentId" jdbcType="VARCHAR" property="telephone"/>
+        <result column="parentName" jdbcType="VARCHAR" property="location"/>
+    </resultMap>
+    <select id="getAddressDetails" resultMap="BaseResultMap" parameterType="com.bosssoft.trainee.factory2.system.entity.Address">
+        select *
+        from address a
+        where a.userId = #{address.userId}
+        <if test="address.receiver != null and address.receiver != ''">
+            and a.receiver = #{address.receiver}
+        </if>
+        <if test="address.location != null and address.location != ''">
+            and a.location = #{address.location}
+        </if>
+        <if test="address.telephone != null and address.telephone != ''">
+            and a.telephone = #{address.telephone}
+        </if>
+    </select>
+</mapper>

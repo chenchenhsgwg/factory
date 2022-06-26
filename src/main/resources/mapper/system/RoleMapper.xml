@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bosssoft.trainee.factory2.system.mapper.RoleMapper">
+
+    <resultMap id="roleMap" type="com.bosssoft.trainee.factory2.system.entity.Role">
+        <result column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <select id="findUserRole" resultMap="roleMap">
+        select r.*
+        from role r
+                 left join user_role ur on (r.id = ur.roleId)
+                 left join t_user u on (u.id = ur.userId)
+        where u.username = #{userName}
+    </select>
+</mapper>
