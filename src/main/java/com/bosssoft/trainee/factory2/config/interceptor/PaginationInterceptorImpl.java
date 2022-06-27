@@ -4,10 +4,8 @@ package com.bosssoft.trainee.factory2.config.interceptor;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.core.MybatisDefaultParameterHandler;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.core.metadata.OrderItem;
 import com.baomidou.mybatisplus.core.parser.ISqlParser;
 import com.baomidou.mybatisplus.core.parser.SqlInfo;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.ExceptionUtils;
 import com.baomidou.mybatisplus.core.toolkit.PluginUtils;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
@@ -23,10 +21,6 @@ import com.bosssoft.trainee.factory2.utils.WebUtil;
 import com.bosssoft.trainee.factory2.system.entity.Role;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import net.sf.jsqlparser.JSQLParserException;
-import net.sf.jsqlparser.parser.CCJSqlParserUtil;
-import net.sf.jsqlparser.schema.Column;
-import net.sf.jsqlparser.statement.select.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.*;
@@ -40,8 +34,6 @@ import org.apache.ibatis.scripting.defaults.DefaultParameterHandler;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.shiro.util.Assert;
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -102,7 +94,6 @@ public class PaginationInterceptorImpl extends PaginationInterceptor {
             String id = mappedStatement.getId();
             String className = id.substring(0, id.lastIndexOf("."));
             String methodName = id.replace(className + ".", "");
-            System.out.println(methodName);
             Class clazz = Class.forName(className);
             if (clazz.isAnnotationPresent(DataFilter.class)) {
                 anno = (DataFilter) clazz.getAnnotation(DataFilter.class);
@@ -133,7 +124,8 @@ public class PaginationInterceptorImpl extends PaginationInterceptor {
                         anno = method.getAnnotation(DataFilter.class);
                         dataFilter = true;
                     }
-                } catch (Exception ex) {
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -172,16 +164,17 @@ public class PaginationInterceptorImpl extends PaginationInterceptor {
         //数据范围过滤
         if (dataFilter) {
             User me = WebUtil.getCurrentUser();
-            String fieldId = anno.filterFieldId(), filterType = anno.filterType().getType(), joinSql = anno.joinSql();
+            String fieldId = anno.filterFieldId();
+            String filterType = anno.filterType().getType();
+            String joinSql = anno.joinSql();
             if (filterType.equals(FilterType.FIELD.getType())) {
                 List<Role> roles = WebUtil.getUserRoles();
-                boolean busyData = false, managerData = false, adminData = false;
+                boolean managerData = false;
+                boolean adminData = false;
                 for (Role role : roles) {
-                    if (Constant.DATA_FILTER_BUSY == role.getId()) busyData = true;
                     if (Constant.DATA_FILTER_MANAGER == role.getId()) managerData = true;
                     if (Constant.DATA_FILTER_ADMIN == role.getId()) adminData = true;
                 }
-//                String subordinates=FebsUtil.getUserSubordinates(me.getDeptId());
                 String subordinates = null;
                 if (managerData) {
                     if (StringUtils.isNotEmpty(subordinates)) {
@@ -209,21 +202,18 @@ public class PaginationInterceptorImpl extends PaginationInterceptor {
                         Assert.isTrue(sqlParts.length == 2);
                         originalSql = sqlParts[0] + "WHERE " + fieldId + " in (" + me.getId() + ") and " + sqlParts[1];
                     }
-                } else if (busyData) {
                 }
-            } else if (filterType.equals(FilterType.JOIN.getType())) {
-                if (StringUtils.isNotEmpty(joinSql)) {
-                    if (!StringUtils.containsIgnoreCase(originalSql, "where")) {
-                        originalSql = originalSql + " " + joinSql + " where " + fieldId + "=" + me.getId();
-                    } else if (originalSql.contains("where")) {
-                        String[] sqlParts = originalSql.split("WHERE");
-                        Assert.isTrue(sqlParts.length == 2);
-                        originalSql = sqlParts[0] + joinSql + " where " + fieldId + "=" + me.getId() + " and " + sqlParts[1];
-                    } else if (originalSql.contains("WHERE")) {
-                        String[] sqlParts = originalSql.split("WHERE");
-                        Assert.isTrue(sqlParts.length == 2);
-                        originalSql = sqlParts[0] + joinSql + " WHERE " + fieldId + "=" + me.getId() + " and " + sqlParts[1];
-                    }
+            } else if (filterType.equals(FilterType.JOIN.getType()) && StringUtils.isNotEmpty(joinSql)) {
+                if (!StringUtils.containsIgnoreCase(originalSql, "where")) {
+                    originalSql = originalSql + " " + joinSql + " where " + fieldId + "=" + me.getId();
+                } else if (originalSql.contains("where")) {
+                    String[] sqlParts = originalSql.split("WHERE");
+                    Assert.isTrue(sqlParts.length == 2);
+                    originalSql = sqlParts[0] + joinSql + " where " + fieldId + "=" + me.getId() + " and " + sqlParts[1];
+                } else if (originalSql.contains("WHERE")) {
+                    String[] sqlParts = originalSql.split("WHERE");
+                    Assert.isTrue(sqlParts.length == 2);
+                    originalSql = sqlParts[0] + joinSql + " WHERE " + fieldId + "=" + me.getId() + " and " + sqlParts[1];
                 }
             }
         }

@@ -4,7 +4,7 @@ package com.bosssoft.trainee.factory2.common.code;
  * @description：状态码枚举类
  * @version: 1.0
  */
-public enum Code {
+public enum CodeStatus {
     /*
     OK[GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）
      */
@@ -259,7 +259,7 @@ public enum Code {
     /**
      * 字典的Code 不能为空 或Code值超过了255
      */
-    DictCodeWrong(4001244, "Dict Code is empty  or Dict Code length over 255 "),
+    DictCodeWrong(4001244, "Dict CodeStatus is empty  or Dict CodeStatus length over 255 "),
 
     /**
      * 字典的Value不能为空 value值超过了255
@@ -279,7 +279,7 @@ public enum Code {
     /**
      * 当前菜单Code值已经存在
      */
-    MenuCodeIsExists(4001248, "This Menu Code is Already Exists "),
+    MenuCodeIsExists(4001248, "This Menu CodeStatus is Already Exists "),
 
     /**
      * 添加新菜单失败
@@ -365,7 +365,7 @@ public enum Code {
     /**
      * AuthCode不为空
      */
-    TotAuthCodeEmpty(4001266, "Auth Code can not Empty"),
+    TotAuthCodeEmpty(4001266, "Auth CodeStatus can not Empty"),
 
     /**
      * 账号密码不能为空
@@ -880,7 +880,7 @@ public enum Code {
     ;
 
     /**
-     * Code 状态码
+     * CodeStatus 状态码
      */
     private final Integer code;
     /**
@@ -888,7 +888,7 @@ public enum Code {
      */
     private final String desc;
 
-    Code(Integer code, String desc) {
+    CodeStatus(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }

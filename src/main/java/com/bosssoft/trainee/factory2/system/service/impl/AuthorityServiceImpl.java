@@ -41,7 +41,6 @@ public class AuthorityServiceImpl extends ServiceImpl<AuthorityMapper, Authority
     @Override
     public List<Authority> findAuthorities(Authority authority) {
         LambdaQueryWrapper<Authority> queryWrapper = new LambdaQueryWrapper<>();
-        // TODO 设置查询条件
         return this.baseMapper.selectList(queryWrapper);
     }
 

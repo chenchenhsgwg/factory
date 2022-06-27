@@ -3,11 +3,9 @@ package com.bosssoft.trainee.factory2.config;
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.bosssoft.trainee.factory2.common.Response;
 import com.bosssoft.trainee.factory2.common.ShiroProperties;
-import com.bosssoft.trainee.factory2.common.code.Code;
+import com.bosssoft.trainee.factory2.common.code.CodeStatus;
 import com.bosssoft.trainee.factory2.utils.SpringContextUtil;
 import com.bosssoft.trainee.factory2.utils.WebUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
@@ -25,7 +23,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 
     private static final String TOKEN = "Authentication";
 
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) throws UnauthorizedException {
@@ -35,9 +33,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
 
         boolean match = false;
         for (String u : anonUrl) {
-//            System.out.println(u);
-            System.out.println(httpServletRequest.getRequestURI());
-//            if (pathMatcher.match(u, httpServletRequest.getRequestURI()))
             if (httpServletRequest.getRequestURI().contains(u))
                 match = true;
         }
@@ -72,7 +67,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         httpServletResponse.setHeader("Access-control-Allow-Origin", httpServletRequest.getHeader("Origin"));
-//        httpServletResponse.setHeader("Access-control-Allow-Origin", "*");
         httpServletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS,PUT,DELETE");
         httpServletResponse.setHeader("Access-Control-Allow-Headers", httpServletRequest.getHeader("Access-Control-Request-Headers"));
         // 跨域时会首先发送一个 option请求，这里我们给 option请求直接返回正常状态
@@ -89,15 +83,6 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
         httpResponse.setCharacterEncoding("utf-8");
         httpResponse.setContentType("application/json; charset=utf-8");
-        final String message = "未认证，请在前端系统进行认证";
-        Response tandemResponse = new Response().message(Code.C401.getDesc()).code(Code.C401.getCode().toString()).status("error");
-        String json = null;
-        try {
-            json = SpringContextUtil.getBean("jacksonObjectMapper", ObjectMapper.class).writeValueAsString(tandemResponse);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        System.out.println(json);
         return false;
     }
 }

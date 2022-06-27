@@ -35,18 +35,14 @@ public class SortUtil {
                 && !StringUtils.equalsIgnoreCase(request.getSortOrder(), "undefined")) {
             if (StringUtils.equals(request.getSortOrder(), Constant.ORDER_DESC))
                 page.addOrder(OrderItem.desc(sortField));
-//                page.setDesc(sortField);
             else
                 page.addOrder(OrderItem.asc(sortField));
-//                page.setAsc(sortField);
         } else {
             if (StringUtils.isNotBlank(defaultSort)) {
                 if (StringUtils.equals(defaultOrder, Constant.ORDER_DESC))
                     page.addOrder(OrderItem.desc(defaultSort));
-//                    page.setDesc(defaultSort);
                 else
                     page.addOrder(OrderItem.asc(defaultSort));
-//                    page.setAsc(defaultSort);
             }
         }
     }

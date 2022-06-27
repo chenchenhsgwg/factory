@@ -32,13 +32,13 @@ public class ETypeController extends BaseController {
 
     @GetMapping
     @RequiresPermissions("etype:view")
-    public Map<String, Object> eTypeList(PagedRequest request, EType eType) {
+    public Map<String, Object> eTypeList(PagedRequest request, @RequestBody @Valid EType eType) {
         return getDataTable(this.eTypeService.findETypeDetails(eType, request));
     }
 
     @GetMapping("/tree")
     @RequiresPermissions("etype:view")
-    public Map<String, Object> eTypeTreeList(PagedRequest request, EType eType) {
+    public Map<String, Object> eTypeTreeList(PagedRequest request, @RequestBody @Valid EType eType) {
         return this.eTypeService.findEquipmentTypes(request, eType);
     }
 

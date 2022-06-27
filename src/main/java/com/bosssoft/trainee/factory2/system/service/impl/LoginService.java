@@ -76,7 +76,7 @@ public class LoginService {
      * @param username 用户名
      * @return 路由集合
      */
-    public ArrayList<VueRouter<Authority>> getUserRouters(String username) {
+    public List<VueRouter<Authority>> getUserRouters(String username) {
         List<VueRouter<Authority>> routes = new ArrayList<>();
         List<Authority> authorities = this.authService.findUserAuthorities(username);
         authorities.forEach(authority -> {
@@ -88,9 +88,7 @@ public class LoginService {
             route.setComponent(authority.getComponent());
             route.setName(authority.getName());
             route.setMeta(new RouterMeta(true, null));
-//            if (route.getPath() != null){
             routes.add(route);
-//            }
         });
         return TreeUtil.buildVueRouter(routes);
     }
@@ -102,7 +100,6 @@ public class LoginService {
      */
     public void loadUserRedisCache(User user) throws Exception {
         // 缓存用户
-//        cacheService.saveUser(user.getUsername());
         cacheService.saveUser(user);
         // 缓存用户角色
         cacheService.saveRoles(user.getUsername());

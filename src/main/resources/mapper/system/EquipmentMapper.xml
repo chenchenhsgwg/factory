@@ -61,11 +61,16 @@
                et.id   typeId,
                et.name typeName,
                f.id    factoryId,
-               f.name  factoryName,
+               f.name  factoryName
         from equipment e
                  left join e_type et on et.id = e.typeId
                  left join factory f on f.id = e.factoryId
         where f.id = #{factoryId}
         group by f.name
     </select>
+    <delete id="deleteEquipmentsByFactoryId">
+        DELETE
+        FROM equipment
+        WHERE factoryId = #{factoryId}
+    </delete>
 </mapper>

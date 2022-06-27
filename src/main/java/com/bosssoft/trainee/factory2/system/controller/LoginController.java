@@ -2,12 +2,12 @@ package com.bosssoft.trainee.factory2.system.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
 import com.bosssoft.trainee.factory2.common.*;
+import com.bosssoft.trainee.factory2.common.code.CodeStatus;
 import com.bosssoft.trainee.factory2.system.mapper.LoginLogMapper;
 import com.bosssoft.trainee.factory2.system.service.IUserService;
 import com.bosssoft.trainee.factory2.system.service.impl.LoginService;
 import com.bosssoft.trainee.factory2.utils.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.bosssoft.trainee.factory2.common.code.Code;
 import com.bosssoft.trainee.factory2.common.router.VueRouter;
 import com.bosssoft.trainee.factory2.common.service.RedisService;
 import com.bosssoft.trainee.factory2.config.JWTToken;
@@ -67,13 +67,11 @@ public class LoginController {
         user.setUserId(userId);
 
         Map<String, Object> userInfo = this.generateUserInfo(jwtToken, user);
-        System.out.println(userInfo);
-        return new Response().addCodeMessage(Code.C200.getCode(), "认证成功", Code.C200.getDesc(), userInfo);
+        return new Response().addCodeMessage(CodeStatus.C200.getCode(), "认证成功", CodeStatus.C200.getDesc(), userInfo);
     }
 
     @GetMapping("index/{username}")
     public Response index(@NotBlank(message = "{required}") @PathVariable String username) {
-        System.out.println("index:"+username);
         Map<String, Object> data = new HashMap<>();
         // 获取系统访问记录
         Long totalVisitCount = loginLogMapper.findTotalVisitCount();
@@ -93,7 +91,7 @@ public class LoginController {
     }
 
     @RequiresPermissions("user:online")
-    @GetMapping("online")
+    @GetMapping("online/{username}")
     public Response userOnline(String username) throws Exception {
         String now = DateUtil.formatFullTime(LocalDateTime.now());
         Set<String> userOnlineStringSet = redisService.zrangeByScore(Constant.ACTIVE_USERS_ZSET_PREFIX, now, "+inf");
@@ -138,7 +136,7 @@ public class LoginController {
     public Response logout(@NotBlank(message = "{required}") @PathVariable String id) throws Exception {
         try {
             this.kickout(id);
-            return new Response().addCodeMessage(Code.C200.getCode(), "退出系统成功", Code.C200.getDesc());
+            return new Response().addCodeMessage(CodeStatus.C200.getCode(), "退出系统成功", CodeStatus.C200.getDesc());
         } catch (Exception e) {
             String message = "退出系统失败";
             throw new FException(message);
@@ -147,7 +145,7 @@ public class LoginController {
     }
 
     @GetMapping("login/{username}")
-    public ArrayList<VueRouter<Authority>> getUserRouters(@NotBlank(message = "{required}") @PathVariable String username) {
+    public List<VueRouter<Authority>> getUserRouters(@NotBlank(message = "{required}") @PathVariable String username) {
         return this.loginService.getUserRouters(username);
     }
 
@@ -159,7 +157,7 @@ public class LoginController {
                        String telephone,
                        String factoryName,
                        String factoryDescription
-    ) throws Exception {
+    ) {
         User user = new User();
         user.setUsername(username);
         user.setPassword(password);
@@ -170,20 +168,17 @@ public class LoginController {
             user.setFactoryDescription(factoryDescription);
             user.setFactoryName(factoryName);
         }
-        System.out.println(username + password + roleId + realname);
         this.userService.regist(user);
     }
 
     public String saveTokenToRedis(User user, JWTToken token, HttpServletRequest request) throws Exception {
         String ip = IPUtil.getIpAddr(request);
-//        String ip = "127.0.0.1";
 
         // 构建在线用户
         ActiveUser activeUser = new ActiveUser();
         activeUser.setUsername(user.getUsername());
         activeUser.setIp(ip);
         activeUser.setToken(token.getToken());
-//        activeUser.setLoginAddress(AddressUtil.getCityInfo(ip));
 
         // zset 存储登录用户，score 为过期时间戳
         this.redisService.zadd(Constant.ACTIVE_USERS_ZSET_PREFIX, Double.valueOf(token.getExipreAt()), mapper.writeValueAsString(activeUser));
@@ -216,9 +211,6 @@ public class LoginController {
 
         Set<String> permissions = this.loginService.getUserPermissions(username);
         userInfo.put("permissions", permissions);
-
-//        UserConfig userConfig = this.loginService.getUserConfig(String.valueOf(user.getUserId()));
-//        userInfo.put("config", userConfig);
 
         user.setPassword("it's a secret");
         userInfo.put("user", user);

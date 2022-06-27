@@ -5,27 +5,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @TableName("t_user")
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
-
-    public User() {
-    }
-
-    public User(Integer id, String username, String password, String realname, String telephone, int factoryId, String factoryName, String factoryDescription, int roleId, String roleName) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.realname = realname;
-        this.telephone = telephone;
-        this.factoryId = factoryId;
-        this.factoryName = factoryName;
-        this.factoryDescription = factoryDescription;
-        this.roleId = roleId;
-        this.roleName = roleName;
-    }
 
     /**
      *

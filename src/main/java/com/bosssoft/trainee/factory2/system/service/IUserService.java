@@ -21,15 +21,7 @@ public interface IUserService extends IService<User> {
 
     User getUserById(int id);
 
-    IPage<User> getNotFriendByIdAndRole(User user, String roleName, PagedRequest request);
-
-    IPage<User> getFriendByIdAndRole(User user, String roleName, PagedRequest request);
-
     User getUserByUsername(String username);
-
-    IPage<User> findFriendDetails(User user, PagedRequest request);
-
-    IPage<User> findNotFriendDetails(User user, PagedRequest request);
 
     void createUser(User user);
 

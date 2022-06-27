@@ -29,7 +29,6 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     @Override
     public IPage<UserRole> findUserRoles(PagedRequest request, UserRole userRole) {
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
-        // TODO 设置查询条件
         Page<UserRole> page = new Page<>(request.getPageNum(), request.getPageSize());
         return this.page(page, queryWrapper);
     }
@@ -37,7 +36,6 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
     @Override
     public List<UserRole> findUserRoles(UserRole userRole) {
         LambdaQueryWrapper<UserRole> queryWrapper = new LambdaQueryWrapper<>();
-        // TODO 设置查询条件
         return this.baseMapper.selectList(queryWrapper);
     }
 

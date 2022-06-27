@@ -12,7 +12,5 @@ public interface EquipmentMapper extends BaseMapper<Equipment> {
 
     IPage<Equipment> getActiveEquipmentDetails(Page page, @Param("factoryId") String factoryId);
 
-//    Boolean rentEquipment(Equipment equipment);
-////
-//    Boolean returnEquipment(Equipment equipment);
+    void deleteEquipmentsByFactoryId(@Param("factoryId") String factoryId);
 }

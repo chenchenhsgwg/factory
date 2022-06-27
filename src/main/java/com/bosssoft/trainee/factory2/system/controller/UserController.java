@@ -10,12 +10,12 @@ import com.bosssoft.trainee.factory2.common.Response;
 import com.bosssoft.trainee.factory2.system.entity.User;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 
@@ -43,11 +43,6 @@ public class UserController extends BaseController {
         return this.userService.findByName(username);
     }
 
-//    @GetMapping("/{userId}")
-//    public User detail(@NotBlank(message = "{required}") @PathVariable int userId) {
-//        return this.userService.findById(userId);
-//    }
-
     @GetMapping
     @RequiresPermissions("user:view")
     public Map<String, Object> userList(PagedRequest request, User user) {
@@ -74,7 +69,8 @@ public class UserController extends BaseController {
 
     @PutMapping
     @RequiresPermissions("user:update")
-    public Response updateUser(User user) {
+    @Transactional
+    public Response updateUser(@RequestBody @Valid User user) {
         this.userService.updateUser(user);
         return new Response().code("200").message("修改用户成功").status("success");
     }

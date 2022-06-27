@@ -9,7 +9,7 @@ import java.util.List;
 
 public class TreeUtil {
 
-    private final static String TOP_NODE_ID = "0";
+    private static final String TOP_NODE_ID = "0";
 
     protected TreeUtil() {
 
@@ -68,9 +68,9 @@ public class TreeUtil {
      * @param <T>    T
      * @return ArrayList<VueRouter < T>>
      */
-    public static <T> ArrayList<VueRouter<T>> buildVueRouter(List<VueRouter<T>> routes) {
+    public static <T> List<VueRouter<T>> buildVueRouter(List<VueRouter<T>> routes) {
         if (routes == null) {
-            return null;
+            return new ArrayList<>();
         }
         List<VueRouter<T>> topRoutes = new ArrayList<>();
         VueRouter<T> router = new VueRouter<>();
@@ -83,8 +83,6 @@ public class TreeUtil {
         topRoutes.add(router);
 
         routes.forEach(route -> {
-            System.out.println(route.getComponent() + " " + route.getName());
-
             String parentId = route.getParentId();
             if (parentId == null || TOP_NODE_ID.equals(parentId)) {
                 topRoutes.add(route);

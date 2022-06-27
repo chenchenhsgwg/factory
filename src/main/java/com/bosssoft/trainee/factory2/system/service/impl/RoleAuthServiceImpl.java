@@ -28,7 +28,6 @@ public class RoleAuthServiceImpl extends ServiceImpl<RoleAuthMapper, RoleAuth> i
     @Override
     public IPage<RoleAuth> findRoleAuths(PagedRequest request, RoleAuth roleAuth) {
         LambdaQueryWrapper<RoleAuth> queryWrapper = new LambdaQueryWrapper<>();
-        // TODO 设置查询条件
         Page<RoleAuth> page = new Page<>(request.getPageNum(), request.getPageSize());
         return this.page(page, queryWrapper);
     }
@@ -66,7 +65,6 @@ public class RoleAuthServiceImpl extends ServiceImpl<RoleAuthMapper, RoleAuth> i
     @Transactional(rollbackFor = Exception.class)
     public void deleteRoleAuth(RoleAuth roleAuth) {
         LambdaQueryWrapper<RoleAuth> wrapper = new LambdaQueryWrapper<>();
-        // TODO 设置删除条件
         this.remove(wrapper);
     }
 

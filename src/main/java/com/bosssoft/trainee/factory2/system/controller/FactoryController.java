@@ -1,6 +1,7 @@
 package com.bosssoft.trainee.factory2.system.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringPool;
+import com.bosssoft.trainee.factory2.system.service.IEquipmentService;
 import com.bosssoft.trainee.factory2.system.service.IFactoryService;
 import com.bosssoft.trainee.factory2.common.BaseController;
 import com.bosssoft.trainee.factory2.common.PagedRequest;
@@ -22,6 +23,9 @@ public class FactoryController extends BaseController {
 
     @Autowired
     private IFactoryService factoryService;
+
+    @Autowired
+    private IEquipmentService equipmentService;
 
     @GetMapping("check/{factoryName}")
     public boolean checkUserName(@NotBlank(message = "{required}") @PathVariable String factoryName) {
@@ -45,6 +49,7 @@ public class FactoryController extends BaseController {
     @RequiresPermissions("factory:delete")
     public Response deleteFactory(@NotBlank(message = "{required}") @PathVariable String factoryIds) {
         String[] ids = factoryIds.split(StringPool.COMMA);
+        this.equipmentService.deleteEquipmentsByFactoryId(ids[0]);
         this.factoryService.deleteFactories(ids);
         return new Response().code("200").message("删除工厂成功").status("success");
     }

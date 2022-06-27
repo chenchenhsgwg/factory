@@ -37,7 +37,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public IPage<Role> findRoles(PagedRequest request, Role role) {
         LambdaQueryWrapper<Role> queryWrapper = new LambdaQueryWrapper<>();
-        // TODO 设置查询条件
         Page<Role> page = new Page<>(request.getPageNum(), request.getPageSize());
         return this.page(page, queryWrapper);
     }
@@ -80,8 +79,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public void deleteRoles(String[] roleIds) throws Exception {
 
-        List<String> userIds = this.userRoleService.getUserIdsByRoleId(roleIds);
-
         List<String> list = Arrays.asList(roleIds);
 
         baseMapper.deleteBatchIds(list);
@@ -89,7 +86,5 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         this.roleAuthService.deleteRoleAuthsByRoleId(roleIds);
         this.userRoleService.deleteUserRolesByRoleId(roleIds);
 
-        // 重新将这些用户的角色和权限缓存到 Redis中
-//        this.userManager.loadUserPermissionRoleRedisCache(userIds);
     }
 }

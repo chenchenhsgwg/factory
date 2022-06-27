@@ -12,17 +12,13 @@ public interface UserMapper extends BaseMapper<User> {
 
     User getUserDetail(@Param("username") String username);
 
-    IPage<User> getFriendDetails(Page page, @Param("user") User user);
-
-    IPage<User> getNotFriendDetails(Page page, @Param("user") User user);
-
-    IPage<User> getNotFriendDetailsByRole(Page page, @Param("user") User user , @Param("roleName") String roleName);
-
     User getUserDetailById(@Param("userId") int userId);
 
     IPage<User> getNotFriendByRoleName(Page page, @Param("user") User user , @Param("roleName") String roleName);
 
     IPage<User> getFriendByRoleName(Page page, @Param("user") User user , @Param("roleName") String roleName);
+
+    User updateUser(@Param("user") User user);
 
 }
 

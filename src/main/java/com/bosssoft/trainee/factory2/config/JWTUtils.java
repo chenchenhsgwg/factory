@@ -15,7 +15,7 @@ import java.util.Date;
 public class JWTUtils {
     private static final long EXPIRE_TIME = 86400L * 1000;
 
-    private String secret;
+    String secret;
 
     /**
      * 校验 token是否正确

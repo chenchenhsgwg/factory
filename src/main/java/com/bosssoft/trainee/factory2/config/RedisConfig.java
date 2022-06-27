@@ -152,7 +152,7 @@ class JacksonRedisSerializer<T> implements RedisSerializer<T> {
             return mapper.writeValueAsBytes(t);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return null;
+            return new byte[]{};
         }
     }
 

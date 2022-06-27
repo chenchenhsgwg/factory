@@ -82,17 +82,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public User findByName(String username) {
-        System.out.println(username);
         User user = this.userMapper.getUserDetail(username);
-        System.out.println(user);
         return user;
     }
 
     @Override
     public User findById(int userId) {
-        System.out.println(userId);
         User user = this.userMapper.getUserDetailById(userId);
-        System.out.println(user);
         return user;
     }
 
@@ -145,51 +141,4 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
     }
 
-    @Override
-    public IPage<User> findFriendDetails(User user, PagedRequest request) {
-        try {
-            Page<User> page = new Page<>();
-            SortUtil.handlePageSort(request, page, "id", Constant.ORDER_ASC, false);
-            return this.baseMapper.getFriendDetails(page, user);
-        } catch (Exception e) {
-            log.error("查询用户异常", e);
-            return null;
-        }
-    }
-
-    @Override
-    public IPage<User> findNotFriendDetails(User user, PagedRequest request) {
-        try {
-            Page<User> page = new Page<>();
-            SortUtil.handlePageSort(request, page, "id", Constant.ORDER_ASC, false);
-            return this.baseMapper.getNotFriendDetails(page, user);
-        } catch (Exception e) {
-            log.error("查询用户异常", e);
-            return null;
-        }
-    }
-
-    @Override
-    public IPage<User> getNotFriendByIdAndRole(User user, String roleName, PagedRequest request) {
-        try {
-            Page<User> page = new Page<>();
-            SortUtil.handlePageSort(request, page, "id", Constant.ORDER_ASC, false);
-            return this.baseMapper.getNotFriendByRoleName(page, user,roleName);
-        } catch (Exception e) {
-            log.error("查询用户异常", e);
-            return null;
-        }
-    }
-
-    @Override
-    public IPage<User> getFriendByIdAndRole(User user, String roleName, PagedRequest request) {
-        try {
-            Page<User> page = new Page<>();
-            SortUtil.handlePageSort(request, page, "id", Constant.ORDER_ASC, false);
-            return this.baseMapper.getFriendByRoleName(page, user,roleName);
-        } catch (Exception e) {
-            log.error("查询用户异常", e);
-            return null;
-        }
-    }
 }

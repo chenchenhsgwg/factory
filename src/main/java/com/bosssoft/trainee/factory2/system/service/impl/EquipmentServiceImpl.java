@@ -92,6 +92,11 @@ public class EquipmentServiceImpl extends ServiceImpl<EquipmentMapper, Equipment
     }
 
     @Override
+    public void deleteEquipmentsByFactoryId(String factoryId) {
+        this.baseMapper.deleteEquipmentsByFactoryId(factoryId);
+    }
+
+    @Override
     public void switchEquipments(String[] ids) {
         List<String> list = Arrays.asList(ids);
         list.forEach(id -> {

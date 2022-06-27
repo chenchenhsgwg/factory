@@ -87,4 +87,23 @@
                  u.realname,
                  u.telephone
     </select>
+
+    <update id="updateUser" parameterType="com.bosssoft.trainee.factory2.system.entity.User">
+        UPDATE t_user
+        <set>
+            <if test="username != null">
+                username = #{username},
+            </if>
+            <if test="password != null">
+                password = #{password},
+            </if>
+            <if test="realname != null">
+                realname = #{realname},
+            </if>
+            <if test="telephone != null">
+                telephone = #{telephone},
+            </if>
+        </set>
+        WHERE id = #{id}
+    </update>
 </mapper>

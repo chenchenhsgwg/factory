@@ -1,27 +1,16 @@
 package com.bosssoft.trainee.factory2.system.controller;
 
-import com.bosssoft.trainee.factory2.common.ShiroProperties;
-import com.bosssoft.trainee.factory2.config.JWTToken;
-import com.bosssoft.trainee.factory2.config.JWTUtils;
-import com.bosssoft.trainee.factory2.system.entity.User;
-import com.bosssoft.trainee.factory2.utils.AesEncryptUtil;
-import com.bosssoft.trainee.factory2.utils.DateUtil;
-import com.bosssoft.trainee.factory2.utils.WebUtil;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.web.subject.WebSubject;
+import org.apache.shiro.subject.support.SubjectThreadState;
+import org.apache.shiro.util.ThreadState;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,17 +20,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.DelegatingFilterProxy;
-
-import javax.servlet.http.HttpServletResponse;
-
-import java.time.LocalDateTime;
-
-import static org.junit.Assert.*;
+import java.nio.charset.Charset;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @Rollback
 @RunWith(SpringRunner.class)
@@ -49,42 +31,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Transactional
 public class UserControllerTest {
 
-    public Subject subject;
     private MockMvc mockMvc;
-    private User user = new User(7, "admin",
-            "fJMAPUO9faymPq3mKErq7A==", "狗管理",
-            "12335345345", 5, "设备中心",
-            "可出租", 3, "超级管理员");
-    protected MockHttpSession mockHttpSession;
-    protected MockHttpServletRequest mockHttpServletRequest;
-    protected MockHttpServletResponse mockHttpServletResponse;
-
-    @Autowired
-    private SecurityManager securityManager;
 
     @Autowired
     private UserController userController;
 
     @Autowired
-    private ShiroProperties properties;
-
-    @Autowired
     protected WebApplicationContext wac;
+    private ThreadState _threadState;
+    protected Subject _mockSubject;
+
+    @Before
+    public void before() {
+        _mockSubject = Mockito.mock(Subject.class);
+        _threadState = new SubjectThreadState(_mockSubject);
+        _threadState.bind();
+    }
 
     @Before
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .addFilter(new DelegatingFilterProxy("shiroFilter", wac), "/")
                         .build();  //初始化MockMvc对象
-//        mockHttpServletResponse = new MockHttpServletResponse();
-//        mockHttpServletRequest = new MockHttpServletRequest(wac.getServletContext());
-//        mockHttpSession = new MockHttpSession(wac.getServletContext());
-//        mockHttpServletRequest.setSession(mockHttpSession);
-//        SecurityUtils.setSecurityManager(securityManager);
-//        subject = new WebSubject.Builder(mockHttpServletRequest, mockHttpServletResponse).buildSubject();
-//        UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
-//        token.setHost("127.0.0.1");
-//        subject.login(token);
     }
 
     @BeforeEach
@@ -128,61 +95,57 @@ public class UserControllerTest {
     @Test
     @DisplayName("非法用户名获取用户完整信息测试")
     public void getIllegalDetail() {
-        Assertions.assertNotNull(userController.detail("admin2"), "错误地获取不存在的用户对象");
+        Assertions.assertNull(userController.detail("admin2"), "错误地获取不存在的用户对象");
     }
 
     @Test
     @DisplayName("获取所有用户信息")
     public void userList() throws Exception {
-        mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .addFilter(new DelegatingFilterProxy("shiroFilter", wac), "/")
-                .build();  //初始化MockMvc对象
-//        mockHttpServletResponse = new MockHttpServletResponse();
-//        mockHttpServletRequest = new MockHttpServletRequest(wac.getServletContext());
-//        mockHttpSession = new MockHttpSession(wac.getServletContext());
-//        mockHttpServletRequest.setSession(mockHttpSession);
-//        SecurityUtils.setSecurityManager(securityManager);
-//        subject = new WebSubject.Builder(mockHttpServletRequest, mockHttpServletResponse).buildSubject();
-//        UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
-//        token.setHost("127.0.0.1");
-//        subject.login(token);
-//        String token = WebUtil.encryptToken(JWTUtils.sign("admin", AesEncryptUtil.encrypt("admin")));
-//        LocalDateTime expireTime = LocalDateTime.now().plusSeconds(properties.getJwtTimeOut());
-//        String expireTimeStr = DateUtil.formatFullTime(expireTime);
-//        JWTToken jwtToken = new JWTToken(token, expireTimeStr);
-
-//        String userId = this.userController.saveTokenToRedis(user, jwtToken, request);
-//        String responseString = mockMvc.perform(
-//                get("/user")  //请求的url,请求的方法是get
-//                //数据的格式
-//        ).andExpect(status().isOk())    //返回的状态是200
-//                .andDo(print())//打印出请求和相应的内容
-//                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
-//        System.out.println("返回的json1= " + responseString);
-//        this.userController.userList(mockMvc.perform(
-//                MockMvcRequestBuilders.get("/user/view")
-//        ).andExpect(status().isOk())    //返回的状态是200
-//                .andDo(print())//打印出请求和相应的内容
-//                .andReturn().getRequest(), user);
+        String responseString = mockMvc.perform(
+                get("/user")  //请求的url,请求的方法是get
+                //数据的格式
+        ).andExpect(status().isOk())    //返回的状态是200
+                .andDo(print())//打印出请求和相应的内容
+                .andReturn().getResponse().getContentAsString();   //将相应的数据转换为字符串
+        System.out.println("返回的json数据= " + responseString);
     }
 
     @Test
-    public void addUser() {
+    @DisplayName("新增用户")
+    public void addUser() throws Exception {
+        String content = "{\"id\":20, \"username\":\"231as\",\"realname\":\"231a2\","+
+                "\"password\":\"231a\", \"telephone\":\"13940131059\"," +
+                "\"roleId\":1, \"roleName\":\"经销商\"}";
+        String mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("/user")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andDo(MockMvcResultHandlers.print()) // 打印信息
+                .andExpect(MockMvcResultMatchers.status().isOk()) // 期望返回的状态码为200
+                .andReturn().getResponse().getContentAsString(Charset.defaultCharset());
+        System.out.println("mvcResult: " + mvcResult);
     }
 
     @Test
+    @DisplayName("删除指定用户")
     public void deleteUser() throws Exception {
         String mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/user/1")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andDo(MockMvcResultHandlers.print()) // 打印信息
                 .andExpect(MockMvcResultMatchers.status().isOk()) // 期望返回的状态码为200
-                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("asaaa")) // 期望返回的json数据中username字段的值为"张三"
-                .andReturn().getResponse().getContentAsString();
-        this.userController.deleteUser("1");
+                .andReturn().getResponse().getContentAsString(Charset.defaultCharset());
         System.out.println("mvcResult: " + mvcResult);
     }
 
     @Test
-    public void updateUser() {
+    @DisplayName("更新用户信息")
+    public void updateUser() throws Exception {
+        String content = "{\"id\":1, \"username\":\"asaaa\",\"realname\":\"大人物\","+
+                "\"password\":\"q4nKCJApl0Ef4Rf%2B4Kve9A==\", \"telephone\":\"13940131059\"}";
+        System.out.println(content);
+        String mvcResult = mockMvc.perform(MockMvcRequestBuilders.put("/user")
+                .contentType(MediaType.APPLICATION_JSON).content(content))
+                .andDo(MockMvcResultHandlers.print()) // 打印信息
+                .andExpect(MockMvcResultMatchers.status().isOk()) // 期望返回的状态码为200
+                .andReturn().getResponse().getContentAsString(Charset.defaultCharset());
+        System.out.println("mvcResult: " + mvcResult);
     }
 }

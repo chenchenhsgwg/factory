@@ -50,6 +50,8 @@ public interface IEquipmentService extends IService<Equipment> {
 
     void deleteEquipments(String[] ids);
 
+    void deleteEquipmentsByFactoryId(String factoryId);
+
     void switchEquipments(String[] ids);
 
     IPage<Equipment> findActiveEquipmentDetails(String userId, PagedRequest request);

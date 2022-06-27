@@ -25,19 +25,17 @@ public class EquipmentController extends BaseController {
 
     @GetMapping
     @RequiresPermissions("equipment:view")
-    public Map<String, Object> equipmentList(PagedRequest request, Equipment equipment,
+    public Map<String, Object> equipmentList(PagedRequest request, @RequestBody Equipment equipment,
                                              @RequestParam(required = false,value = "typeName") String typeName,
                                              @RequestParam(required = false,value = "name") String name) {
-//        System.out.println(equipment);
-        equipment.setTypeName(typeName);equipment.setName(name);
-        System.out.println(equipment);
+        equipment.setTypeName(typeName);
+        equipment.setName(name);
         return getDataTable(this.equipmentService.findEquipmentDetails(equipment, request));
     }
 
     @GetMapping("/{factoryId}")
     @RequiresPermissions("equipment:view")
     public Map<String, Object> activeEquipmentList(PagedRequest request, @NotBlank(message = "{required}") @PathVariable String factoryId) {
-//        if (userId.equals("7"))return equipmentList(request,new Equipment());
         return getDataTable(this.equipmentService.findActiveEquipmentDetails(factoryId, request));
     }
 
